@@ -1,13 +1,10 @@
 import {noop} from '@shopify/javascript-utilities/other';
-import {
+import createAppBridgeApp, {
   getShopOrigin,
-  createAppWrapper,
   LifecycleHook,
-  HooksInterface,
   AppConfig,
   DispatchActionHook,
 } from '@shopify/app-bridge';
-import {isServer} from '@shopify/react-utilities/target';
 import {AppProviderProps, Context} from '../../types';
 import {StickyManager} from '../withSticky';
 import ScrollLockManager from '../ScrollLockManager';
@@ -20,25 +17,6 @@ export interface CreateAppProviderContext extends AppProviderProps {
   subscribe?(callback: () => void): void;
   unsubscribe?(callback: () => void): void;
 }
-
-const serverAppBridge = {
-  dispatch<A>() {
-    return {} as A;
-  },
-  error() {
-    return noop;
-  },
-  featuresAvailable() {
-    return new Promise(noop);
-  },
-  getState() {
-    return new Promise(noop);
-  },
-  localOrigin: '',
-  subscribe() {
-    return noop;
-  },
-};
 
 export default function createAppProviderContext({
   i18n,
@@ -53,18 +31,13 @@ export default function createAppProviderContext({
 }: CreateAppProviderContext = {}): Context {
   const intl = new Intl(i18n);
   const link = new Link(linkComponent);
-
-  let appBridge;
-
-  if (apiKey) {
-    appBridge = isServer
-      ? serverAppBridge
-      : createApp({
-          apiKey,
-          shopOrigin: shopOrigin || getShopOrigin(),
-          forceRedirect,
-        });
-  }
+  const appBridge = apiKey
+    ? createApp({
+        apiKey,
+        shopOrigin: shopOrigin || getShopOrigin(),
+        forceRedirect,
+      })
+    : undefined;
 
   return {
     polaris: {
@@ -79,7 +52,7 @@ export default function createAppProviderContext({
   };
 }
 
-export const setClientInterface: DispatchActionHook = function(next) {
+export const setClientInterfaceHook: DispatchActionHook = function(next) {
   return function(action) {
     action.clientInterface = {
       name: '@shopify/polaris',
@@ -89,12 +62,10 @@ export const setClientInterface: DispatchActionHook = function(next) {
   };
 };
 
-export function hookMiddleware(hooks: HooksInterface) {
-  hooks.set(LifecycleHook.DispatchAction, setClientInterface);
-}
-
 function createApp(appBridgeConfig: AppConfig) {
-  return createAppWrapper(window.top, window.location.origin, [hookMiddleware])(
-    appBridgeConfig,
-  );
+  const app = createAppBridgeApp(appBridgeConfig);
+  if (app.hooks) {
+    app.hooks.set(LifecycleHook.DispatchAction, setClientInterfaceHook);
+  }
+  return app;
 }
