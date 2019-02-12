@@ -14,6 +14,8 @@ Use [the changelog guidelines](https://git.io/polaris-changelog-guidelines) to f
 
 ### Bug fixes
 
+- Removed left margin from vertical `Stack` to prevent overflow ([#1024](https://github.com/Shopify/polaris-react/pull/1024))
+
 ### Documentation
 
 ### Development workflow
