@@ -12,6 +12,8 @@ Use [the changelog guidelines](https://git.io/polaris-changelog-guidelines) to f
 
 ### Enhancements
 
+- Added `ToastDuration` enum for the `duration` of `Toast` with common values ([#1059](https://github.com/Shopify/polaris-react/pull/1059))
+
 ### Bug fixes
 
 ### Documentation

@@ -137,6 +137,7 @@ export {
   Props as FrameProps,
   ContextualSaveBarProps,
   ToastProps,
+  ToastDuration,
   DEFAULT_TOAST_DURATION,
 } from './Frame';
 

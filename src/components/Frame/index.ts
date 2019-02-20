@@ -9,6 +9,7 @@ export {
   FrameContext,
   frameContextTypes,
   ToastProps,
+  ToastDuration,
 } from './types';
 
 export default Frame;
