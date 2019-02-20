@@ -14,6 +14,8 @@ Use [the changelog guidelines](https://git.io/polaris-changelog-guidelines) to f
 
 ### Documentation
 
+- Fixed selected state in `Autocomplete` examples ([#1053](https://github.com/Shopify/polaris-react/pull/1053))
+
 ### Development workflow
 
 ### Dependency upgrades
